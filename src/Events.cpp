@@ -16,11 +16,14 @@ namespace Events {
         if (a_event->actionRef->IsPlayerRef()) {
             if (a_event->objectActivated->IsCrimeToActivate()) {
                 if (const auto player = RE::PlayerCharacter::GetSingleton(); player->IsSneaking()) {
-                    if (const auto detection_level = player->RequestDetectionLevel(player->As<RE::Actor>());
-                        detection_level == -1000) {
-                        const auto obj_value = static_cast<float>(a_event->objectActivated->GetGoldValue());
-                        const auto xp_gain = obj_value * Settings::sneak_xp_gain_mult;
-                        player->AddSkillExperience(RE::ActorValue::kSneak, xp_gain);
+                    const auto detection_level = player->RequestDetectionLevel(player->As<RE::Actor>());
+                    if (detection_level == -1000) {
+                        const auto obj_value = static_cast<float>(a_event->objectActivated->GetBaseObject()->
+                                                                           GetGoldValue());
+                        if (obj_value > 0) {
+                            const auto xp_gain = obj_value * Settings::sneak_xp_gain_mult;
+                            player->AddSkillExperience(RE::ActorValue::kSneak, xp_gain);
+                        }
                     }
                 }
             }
