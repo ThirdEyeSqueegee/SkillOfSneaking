@@ -18,7 +18,9 @@ namespace Events {
                 if (const auto player = RE::PlayerCharacter::GetSingleton(); player->IsSneaking()) {
                     if (const auto detection_level = player->RequestDetectionLevel(player->As<RE::Actor>());
                         detection_level == -1000) {
-                        player->AddSkillExperience(RE::ActorValue::kSneak, Settings::sneak_xp_gain);
+                        const auto obj_value = static_cast<float>(a_event->objectActivated->GetGoldValue());
+                        const auto xp_gain = obj_value * Settings::sneak_xp_gain_mult;
+                        player->AddSkillExperience(RE::ActorValue::kSneak, xp_gain);
                     }
                 }
             }

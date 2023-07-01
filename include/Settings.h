@@ -14,5 +14,5 @@ public:
     static Settings* GetSingleton();
     static void LoadSettings();
 
-    inline static float sneak_xp_gain = 5.0f;
+    inline static float sneak_xp_gain_mult = 0.05f;
 };
