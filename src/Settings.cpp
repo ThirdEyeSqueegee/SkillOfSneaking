@@ -12,7 +12,8 @@ void Settings::LoadSettings() {
     ini.SetUnicode();
     ini.LoadFile(R"(.\Data\SKSE\Plugins\SkillOfSneaking.ini)");
 
-    sneak_xp_gain_mult = std::atof(ini.GetValue("General", "fSneakXPGainMult"));
+    sneak_xp_gain_mult = std::stof(ini.GetValue("General", "fSneakXPGainMult"));
 
     logger::info("Loaded settings");
+    logger::info("    fSneakXPGainMult = {}", sneak_xp_gain_mult);
 }

@@ -9,18 +9,16 @@ namespace Events {
     }
 
     RE::BSEventNotifyControl OnActivateEventHandler::ProcessEvent(const RE::TESActivateEvent* a_event,
-                                                                  RE::BSTEventSource<RE::TESActivateEvent>*
-                                                                  a_eventSource) {
+                                                                  RE::BSTEventSource<RE::TESActivateEvent>* a_eventSource) {
         if (!a_event) return RE::BSEventNotifyControl::kContinue;
 
         if (a_event->actionRef->IsPlayerRef()) {
-            if (a_event->objectActivated->IsCrimeToActivate()) {
+            if (a_event->objectActivated->IsCrimeToActivate()
+                && a_event->objectActivated->GetFormType() != RE::FormType::Container) {
                 if (const auto player = RE::PlayerCharacter::GetSingleton(); player->IsSneaking()) {
-                    const auto detection_level = player->RequestDetectionLevel(player->As<RE::Actor>());
-                    if (detection_level == -1000) {
-                        const auto obj_value = static_cast<float>(a_event->objectActivated->GetBaseObject()->
-                                                                           GetGoldValue());
-                        if (obj_value > 0) {
+                    if (player->RequestDetectionLevel(player->As<RE::Actor>()) < 0) {
+                        if (const auto obj_value = static_cast<float>(a_event->objectActivated->GetBaseObject()->GetGoldValue());
+                            obj_value > 0) {
                             const auto xp_gain = obj_value * Settings::sneak_xp_gain_mult;
                             player->AddSkillExperience(RE::ActorValue::kSneak, xp_gain);
                         }
@@ -36,5 +34,45 @@ namespace Events {
         const auto holder = RE::ScriptEventSourceHolder::GetSingleton();
         holder->AddEventSink(GetSingleton());
         logger::info("Registered activate event handler");
+    }
+
+    OnContainerChangedEventHandler* OnContainerChangedEventHandler::GetSingleton() {
+        static OnContainerChangedEventHandler singleton;
+        return std::addressof(singleton);
+    }
+
+    RE::BSEventNotifyControl OnContainerChangedEventHandler::ProcessEvent(const RE::TESContainerChangedEvent* a_event,
+                                                                          RE::BSTEventSource<RE::TESContainerChangedEvent>* a_eventSource) {
+        if (!a_event) return RE::BSEventNotifyControl::kContinue;
+
+        if (const auto player = RE::PlayerCharacter::GetSingleton();
+            player->GetParentCell() && player->Is3DLoaded() && player->IsSneaking()) {
+            if (player->RequestDetectionLevel(player->As<RE::Actor>()) < 0) {
+                if (player->GetFormID() == a_event->newContainer) {
+                    if (a_event->oldContainer) {
+                        const auto changes = player->GetInventoryChanges(true);
+                        const auto obj = RE::TESForm::LookupByID<RE::TESBoundObject>(a_event->baseObj);
+                        for (const auto item : *changes->entryList) {
+                            if (item->object == obj) {
+                                if (!item->GetOwner()->As<RE::PlayerCharacter>()) {
+                                    if (const auto obj_value = static_cast<float>(obj->GetGoldValue()); obj_value > 0) {
+                                        const auto xp_gain = obj_value * Settings::sneak_xp_gain_mult;
+                                        player->AddSkillExperience(RE::ActorValue::kSneak, xp_gain);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return RE::BSEventNotifyControl::kContinue;
+    }
+
+    void OnContainerChangedEventHandler::Register() {
+        const auto holder = RE::ScriptEventSourceHolder::GetSingleton();
+        holder->AddEventSink(GetSingleton());
+        logger::info("Registered container changed event handler");
     }
 }
