@@ -3,7 +3,7 @@ message("Using toolchain file ${CMAKE_TOOLCHAIN_FILE}.")
 
 project(
   SkillOfSneaking
-  VERSION 1.0.7
+  VERSION 1.1.1
   LANGUAGES CXX
 )
 set(CMAKE_CXX_STANDARD 23)
