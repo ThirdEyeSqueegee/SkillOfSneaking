@@ -16,9 +16,14 @@ void Settings::LoadSettings() noexcept
         logger::debug("Debug logging enabled");
     }
 
-    sneak_xp_gain_mult = static_cast<float>(ini.GetDoubleValue("General", "fSneakXPGainMult"));
+    xp_gain_mult = static_cast<float>(ini.GetDoubleValue("General", "fXPGainMult"));
+
+    if (RE::TESDataHandler::GetSingleton()->LookupLoadedModByName("HandtoHand.esp"sv)) {
+        logger::info("Found HandtoHand.esp, using Security skill");
+        av_to_use = RE::ActorValue::kPickpocket;
+    }
 
     logger::info("Loaded settings");
-    logger::info("\tfSneakXPGainMult = {:.2f}", sneak_xp_gain_mult);
+    logger::info("\tfXPGainMult = {:.2f}", xp_gain_mult);
     logger::info("");
 }

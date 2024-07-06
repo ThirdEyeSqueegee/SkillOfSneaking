@@ -3,7 +3,7 @@ message("Using toolchain file ${CMAKE_TOOLCHAIN_FILE}.")
 
 project(
   SkillOfSneaking
-  VERSION 1.1.1
+  VERSION 1.1.2
   LANGUAGES CXX
 )
 set(CMAKE_CXX_STANDARD 23)
@@ -46,8 +46,8 @@ source_group(
 )
 
 set(BUILD_TESTS OFF)
-add_subdirectory(extern/CommonLibSSE-NG)
-include(extern/CommonLibSSE-NG/cmake/CommonLibSSE.cmake)
+add_subdirectory($ENV{CommonLibSSEPath} CommonLibSSE-NG)
+include($ENV{CommonLibSSEPath}/cmake/CommonLibSSE.cmake)
 
 add_commonlibsse_plugin(
   ${PROJECT_NAME}

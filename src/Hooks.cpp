@@ -2,8 +2,6 @@
 
 #include "Settings.h"
 
-constexpr auto sneak_av{ RE::ActorValue::kSneak };
-
 namespace Hooks
 {
     void Install() noexcept
@@ -31,7 +29,7 @@ namespace Hooks
 
         const auto name{ a_targetRef->GetName() };
 
-        if ("Coin Purse"sv.compare(name) || !a_targetRef->IsCrimeToActivate() || !a_activatorRef->IsPlayerRef()) {
+        if ("Coin Purse"sv == name || !a_targetRef->IsCrimeToActivate() || !a_activatorRef->IsPlayerRef()) {
             return func(a_this, a_targetRef, a_activatorRef, a_arg3, a_object, a_targetCount);
         }
 
@@ -50,9 +48,9 @@ namespace Hooks
             std::mt19937                  rng(rd());
             std::uniform_int_distribution dist(0, 20);
 
-            const auto xp_to_add{ static_cast<float>(dist(rng)) * Settings::sneak_xp_gain_mult };
-            player->AddSkillExperience(sneak_av, xp_to_add);
-            logger::debug("\tAdded {} Sneak XP", xp_to_add);
+            const auto xp_to_add{ static_cast<float>(dist(rng)) * Settings::xp_gain_mult };
+            player->AddSkillExperience(Settings::av_to_use, xp_to_add);
+            logger::debug("\tAdded {} XP", xp_to_add);
         }
 
         return func(a_this, a_targetRef, a_activatorRef, a_arg3, a_object, a_targetCount);
@@ -99,9 +97,9 @@ namespace Hooks
                 }
                 else {
                     logger::debug("\t{} (0x{:x}) value: {}", obj_name, obj_form_id, value);
-                    const auto xp_to_add{ value * Settings::sneak_xp_gain_mult };
-                    a_this->AddSkillExperience(sneak_av, xp_to_add);
-                    logger::debug("\tAdded {} Sneak XP", xp_to_add);
+                    const auto xp_to_add{ value * Settings::xp_gain_mult };
+                    a_this->AddSkillExperience(Settings::av_to_use, xp_to_add);
+                    logger::debug("\tAdded {} XP", xp_to_add);
                 }
             }
         }
@@ -137,9 +135,9 @@ namespace Hooks
             }
             else {
                 logger::debug("\t{} (0x{:x}) value: {}", obj_name, obj_form_id, value);
-                const auto xp_to_add{ value * Settings::sneak_xp_gain_mult };
-                a_this->AddSkillExperience(sneak_av, xp_to_add);
-                logger::debug("\tAdded {} Sneak XP", xp_to_add);
+                const auto xp_to_add{ value * Settings::xp_gain_mult };
+                a_this->AddSkillExperience(Settings::av_to_use, xp_to_add);
+                logger::debug("\tAdded {} XP", xp_to_add);
             }
         }
 

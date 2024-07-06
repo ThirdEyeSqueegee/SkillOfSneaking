@@ -7,5 +7,7 @@ public:
 
     inline static bool debug_logging{};
 
-    inline static float sneak_xp_gain_mult{};
+    inline static float xp_gain_mult{};
+
+    inline static auto av_to_use{ RE::ActorValue::kSneak };
 };

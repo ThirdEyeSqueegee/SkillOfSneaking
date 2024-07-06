@@ -2,11 +2,9 @@
 #include "Logging.h"
 #include "Settings.h"
 
-#include "SKSE/Interfaces.h"
-
 void Listener(SKSE::MessagingInterface::Message* message) noexcept
 {
-    if (message->type <=> SKSE::MessagingInterface::kDataLoaded == 0) {
+    if (message->type == SKSE::MessagingInterface::kDataLoaded) {
         Settings::LoadSettings();
         Hooks::Install();
     }
@@ -17,9 +15,10 @@ SKSEPluginLoad(const SKSE::LoadInterface* skse)
     InitializeLogging();
 
     const auto plugin{ SKSE::PluginDeclaration::GetSingleton() };
+    const auto name{ plugin->GetName() };
     const auto version{ plugin->GetVersion() };
 
-    logger::info("{} {} is loading...", plugin->GetName(), version);
+    logger::info("{} {} is loading...", name, version);
 
     Init(skse);
 
@@ -27,7 +26,7 @@ SKSEPluginLoad(const SKSE::LoadInterface* skse)
         return false;
     }
 
-    logger::info("{} has finished loading.", plugin->GetName());
+    logger::info("{} has finished loading.", name);
     logger::info("");
 
     return true;

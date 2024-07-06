@@ -1,21 +1,8 @@
 {
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
   "name": "skill-of-sneaking",
-  "version-semver": "1.1.1",
-  "dependencies": [
-    "fmt",
-    "spdlog",
-    "rapidcsv",
-    "simpleini",
-    "directxtk",
-    "openvr"
-  ],
-  "license": "GPL-3.0-or-later",
-  "vcpkg-configuration": {
-    "default-registry": {
-      "kind": "git",
-      "repository": "https://github.com/microsoft/vcpkg",
-      "baseline": "c591ac6466a55ef0a05a3d56bb1489ca36e50102"
-    }
-  }
+  "version-semver": "1.1.2",
+  "builtin-baseline": "49ac2134b31b95b0ddf29d56873dcd24392691df",
+  "dependencies": ["fmt", "spdlog", "rapidcsv", "simpleini", "directxtk"],
+  "license": "GPL-3.0-or-later"
 }
